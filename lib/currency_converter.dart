@@ -155,6 +155,13 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                 ],
               ),
             ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text('=',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+            ),
+
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Row(
@@ -205,7 +212,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                                 color: Colors.black, fontSize: 22),
                             onChanged: (String? newValue) {
                               setState(() {
-                                chooseFirst = newValue!;
+                                chooseSecond = newValue!;
                                 selectedCurrency = currencyList['chooseFirst'];
                               });
                             },
