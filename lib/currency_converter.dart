@@ -155,76 +155,101 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                 ],
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 8.0),
-            //   child: Row(
-            //     children: [
-            //       Container(
-            //         width: 200,
-            //         decoration: BoxDecoration(
-            //           border: Border.all(
-            //             width: 2,
-            //             color: Colors.grey,
-            //           ),
-            //           borderRadius: const BorderRadius.only(
-            //             bottomLeft: Radius.circular(8),
-            //             topLeft: Radius.circular(8),
-            //           ),
-            //         ),
-            //         child: DropdownButton(
-            //           hint: const Text('Select currency'),
-            //           isExpanded: true,
-            //           underline: const SizedBox(),
-            //           dropdownColor: Colors.white,
-            //           value: chooseSecond,
-            //           icon: const Icon(Icons.arrow_drop_down),
-            //           iconSize: 36,
-            //           elevation: 16,
-            //           style: const TextStyle(color: Colors.black, fontSize: 22),
-            //           onChanged: (String? newValue) {
-            //             setState(() {
-            //               chooseSecond = newValue!;
-            //             });
-            //           },
-            //           items: countries.map((value) {
-            //             return DropdownMenuItem(
-            //               value: value,
-            //               child: Text(
-            //                 value,
-            //                 textAlign: TextAlign.center,
-            //               ),
-            //             );
-            //           }).toList(),
-            //         ),
-            //       ),
-            //       Flexible(
-            //         child: Container(
-            //           width: 400,
-            //           height: 51,
-            //           alignment: Alignment.center,
-            //           decoration: BoxDecoration(
-            //             border: Border.all(
-            //               width: 2,
-            //               color: Colors.grey,
-            //             ),
-            //             borderRadius: const BorderRadius.only(
-            //               bottomRight: Radius.circular(8),
-            //               topRight: Radius.circular(8),
-            //             ),
-            //           ),
-            //           // 통화 값 계산 convertResult! = ;
-            //           child: Text(
-            //             "$convertResult",
-            //             style: const TextStyle(
-            //               fontSize: 17,
-            //               fontWeight: FontWeight.bold,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(8),
+                        topLeft: Radius.circular(8),
+                      ),
+                    ),
+                    child: FutureBuilder<Map<String, dynamic>>(
+                        future: _api.getCurrencies(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Center(
+                              child: Text('에러가 났습니다.'),
+                            );
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: Text('데이터가 없습니다.'),
+                            );
+                          }
+                          final currencyList = snapshot.data!;
+                          // print(currencyList);
+
+                          return DropdownButton(
+                            hint: const Text('Select currency'),
+                            isExpanded: true,
+                            underline: const SizedBox(),
+                            dropdownColor: Colors.white,
+                            value: chooseFirst,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            iconSize: 36,
+                            elevation: 16,
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 22),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                chooseFirst = newValue!;
+                                selectedCurrency = currencyList['chooseFirst'];
+                              });
+                            },
+
+                            items: countries.map((value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        }),
+                  ),
+                  Flexible(
+                    child: Container(
+                      width: 400,
+                      height: 51,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 2,
+                          color: Colors.grey,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomRight: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                        ),
+                      ),
+                      // 통화 값 계산 convertResult! = ;
+                      child: Text(
+                        "$convertResult",
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
