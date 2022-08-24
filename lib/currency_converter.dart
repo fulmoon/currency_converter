@@ -18,11 +18,11 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
   List<String> countries = ["USD", "AED", "AFN", "ALL", "AMD", "KRW"];
   List<double> currencies = [1, 3.6725, 89.7035, 113.5506, 405.3498, 300.8174];
 
-  String firstCurrency = 'USD';
-  String secondCurrency = 'KRW';
+  String baseCountry = 'USD';
+  String targetCountry = 'KRW';
 
-  double firstExchange = 1.0;
-  double secondExchange = 1.0;
+  double baseExchange = 1.0;
+  double targetExchange = 1.0;
   double convertResult = 0.0;
 
   @override
@@ -92,14 +92,13 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                             );
                           }
                           final currencyList = snapshot.data!;
-                          // print(currencyList);
 
                           return DropdownButton(
                             hint: const Text('Select currency'),
                             isExpanded: true,
                             underline: const SizedBox(),
                             dropdownColor: Colors.white,
-                            value: firstCurrency,
+                            value: baseCountry,
                             icon: const Icon(Icons.arrow_drop_down),
                             iconSize: 36,
                             elevation: 16,
@@ -107,9 +106,11 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                                 color: Colors.black, fontSize: 22),
                             onChanged: (String? newValue) {
                               setState(() {
-                                firstCurrency = newValue!;
-                                firstExchange = currencyList[newValue];
-                                convertResult = firstExchange * secondExchange * double.parse(_controller.text);
+                                baseCountry = newValue!;
+                                baseExchange = currencyList[newValue];
+                                convertResult = baseExchange *
+                                    targetExchange *
+                                    double.parse(_controller.text);
                               });
                             },
                             items: countries.map((value) {
@@ -135,7 +136,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp('[0-9]'))
-                        //FilteringTextInputFormatter.digitsOnly
+                        //FilteringTextInputFormatter.digitsOnly            //동일한 구문
                       ],
                       decoration: const InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -148,8 +149,9 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                       ),
                       onChanged: (value) {
                         setState(() {
-                          // firstExchange = double.parse(value);
-                          convertResult = firstExchange * double.parse(value) *secondExchange;
+                          convertResult = baseExchange *
+                              double.parse(value) *
+                              targetExchange;
                         });
                       },
                     ),
@@ -180,43 +182,24 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                         topLeft: Radius.circular(8),
                       ),
                     ),
-                    child: FutureBuilder<Map<String, dynamic>>(
-                        future: _api.getCurrencies(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return const Center(
-                              child: Text('에러가 났습니다.'),
-                            );
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          if (!snapshot.hasData) {
-                            return const Center(
-                              child: Text('데이터가 없습니다.'),
-                            );
-                          }
-                          final currencyList = snapshot.data!;
-                          // print(currencyList);
-
-                          return DropdownButton(
+                    child: DropdownButton(
                             hint: const Text('Select currency'),
                             isExpanded: true,
                             underline: const SizedBox(),
                             dropdownColor: Colors.white,
-                            value: secondCurrency,
+                            value: targetCountry,
                             icon: const Icon(Icons.arrow_drop_down),
                             iconSize: 36,
                             elevation: 16,
                             style: const TextStyle(
-                                color: Colors.black, fontSize: 22),
+                              color: Colors.black, fontSize: 22),
                             onChanged: (String? newValue) {
                               setState(() {
-                                secondCurrency = newValue!;
-                                secondExchange = currencyList[newValue];
-                                convertResult = firstExchange * secondExchange * double.parse(_controller.text);
+                                targetCountry = newValue!;
+                                targetExchange = currencyList[newValue];
+                                convertResult = baseExchange *
+                                    targetExchange *
+                                    double.parse(_controller.text);
                               });
                             },
                             items: countries.map((value) {
@@ -228,8 +211,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                                 ),
                               );
                             }).toList(),
-                          );
-                        }),
+                          ),
                   ),
                   Flexible(
                     child: Container(
@@ -246,8 +228,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                           topRight: Radius.circular(8),
                         ),
                       ),
-                      // 통화 값 계산 convertResult! = ;
-                      // convertResult = firstExchange * secondExchange;
+                      // convertResult = baseExchange * targetExchange * inputValue;            //통화 값 계산
                       child: Text(
                         "$convertResult",
                         style: const TextStyle(
