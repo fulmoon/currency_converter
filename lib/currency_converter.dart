@@ -18,10 +18,11 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
   List<String> countries = ["USD", "AED", "AFN", "ALL", "AMD", "KRW"];
   List<double> currencies = [1, 3.6725, 89.7035, 113.5506, 405.3498, 300.8174];
 
-  String chooseFirst = 'USD';
-  String chooseSecond = 'KRW';
+  String firstCurrency = 'USD';
+  String secondCurrency = 'KRW';
 
-  double selectedCurrency  = 1.0;
+  double firstExchange = 1.0;
+  double secondExchange = 1.0;
   double convertResult = 0.0;
 
   @override
@@ -98,7 +99,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                             isExpanded: true,
                             underline: const SizedBox(),
                             dropdownColor: Colors.white,
-                            value: chooseFirst,
+                            value: firstCurrency,
                             icon: const Icon(Icons.arrow_drop_down),
                             iconSize: 36,
                             elevation: 16,
@@ -106,11 +107,11 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                                 color: Colors.black, fontSize: 22),
                             onChanged: (String? newValue) {
                               setState(() {
-                                chooseFirst = newValue!;
-                                selectedCurrency = currencyList['chooseFirst'];
+                                firstCurrency = newValue!;
+                                firstExchange = currencyList[newValue];
+                                convertResult = firstExchange * secondExchange * double.parse(_controller.text);
                               });
                             },
-
                             items: countries.map((value) {
                               return DropdownMenuItem(
                                 value: value,
@@ -147,7 +148,8 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                       ),
                       onChanged: (value) {
                         setState(() {
-                          selectedCurrency = selectedCurrency * double.parse(value);
+                          // firstExchange = double.parse(value);
+                          convertResult = firstExchange * double.parse(value) *secondExchange;
                         });
                       },
                     ),
@@ -155,13 +157,13 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                 ],
               ),
             ),
-
             const Padding(
               padding: EdgeInsets.only(top: 8.0),
-              child: Text('=',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+              child: Text(
+                '=',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Row(
@@ -204,7 +206,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                             isExpanded: true,
                             underline: const SizedBox(),
                             dropdownColor: Colors.white,
-                            value: chooseFirst,
+                            value: secondCurrency,
                             icon: const Icon(Icons.arrow_drop_down),
                             iconSize: 36,
                             elevation: 16,
@@ -212,11 +214,11 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                                 color: Colors.black, fontSize: 22),
                             onChanged: (String? newValue) {
                               setState(() {
-                                chooseSecond = newValue!;
-                                selectedCurrency = currencyList['chooseFirst'];
+                                secondCurrency = newValue!;
+                                secondExchange = currencyList[newValue];
+                                convertResult = firstExchange * secondExchange * double.parse(_controller.text);
                               });
                             },
-
                             items: countries.map((value) {
                               return DropdownMenuItem(
                                 value: value,
@@ -245,6 +247,7 @@ class _CurrencyConvertState extends State<CurrencyConvert> {
                         ),
                       ),
                       // 통화 값 계산 convertResult! = ;
+                      // convertResult = firstExchange * secondExchange;
                       child: Text(
                         "$convertResult",
                         style: const TextStyle(
